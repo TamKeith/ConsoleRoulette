@@ -11,7 +11,7 @@ public class Main {
     private static int chosenNumber;
     private static double amount;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
 
         /**
          *  Read all gamers from the text file into a simple string
@@ -125,17 +125,8 @@ public class Main {
             }
         }
 
-        int delay = 0;
-        int period = 30 * 1000;
-        Timer timer = new Timer();
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // chooser number between 1 - 36 for the ball to land on
-                chosenNumber = ballChosenNumber();
-            }
-        }, delay, period);
+        Thread.sleep(30000);
+        chosenNumber = ballChosenNumber();
 
         System.out.println("Player \t Bet \t Outcome \t Winnings");
         System.out.println("---");
