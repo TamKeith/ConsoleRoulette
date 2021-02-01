@@ -4,10 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -87,11 +84,8 @@ public class Main {
                                 playerBets.setBetPosition();
                                 System.out.println("Odd Number bet has been placed for " + playerNames[i]);
                                 player.get(playerNames[i]).add(playerBets);
-//                                String output = StringUtils.join(new String[]{playerNames[i], "ODD", Double.toString(playerBets.getBetAmount())}, " ");
-//                                System.out.println(output);
                                 System.out.println(playerBets.getName());
-                                String result = playerBets.getName() + " " + Constants.ODD + " " + playerBets.getBetAmount();
-                                System.out.println(result);
+                                System.out.println(playerBets.getName() + " " + Constants.ODD + " " + playerBets.getBetAmount());
                                 stopBets = true;
                                 break;
                             case 2:
@@ -131,7 +125,71 @@ public class Main {
             }
         }
 
+        int delay = 0;
+        int period = 30 * 1000;
+        Timer timer = new Timer();
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                // chooser number between 1 - 36 for the ball to land on
+                chosenNumber = ballChosenNumber();
+            }
+        }, delay, period);
+
+        System.out.println("Player \t Bet \t Outcome \t Winnings");
+        System.out.println("---");
+        for(int i = 0; i < playerNames.length; i++){
+            for(int j = 0; j < player.get(playerNames[i]).size(); j++){
+
+                double amountBet = player.get(playerNames[i]).get(j).getBetAmount();
+                int betPosition = player.get(playerNames[i]).get(j).getBetPosition();
+                boolean isBetEven = player.get(playerNames[i]).get(j).isEven();
+                boolean isPlacedEvenOrOddBet = player.get(playerNames[i]).get(j).isPlacedEvenOrOddBet();
+                double winnings;
+
+                if((!isBetEven) && (!isPlacedEvenOrOddBet)){
+                    if((chosenNumber == betPosition)) {
+                        winnings = 36 * amountBet;
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + player.get(playerNames[i]).get(j).getBetAmount() + "\t" + Constants.WIN + "\t" + winnings);
+                    } else {
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + player.get(playerNames[i]).get(j).getBetAmount() + "\t" + Constants.LOSE + "\t" + 0.0);
+                    }
+                } else if ((isBetEven) && (isPlacedEvenOrOddBet)){
+                    if((chosenNumber % 2 == 0)){
+                        winnings = 2 * amountBet;
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + Constants.EVEN + "\t" + Constants.WIN + "\t" + winnings);
+                    } else {
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + Constants.EVEN + "\t" + Constants.LOSE + "\t" + 0.0);
+                    }
+                } else if ((!isBetEven) && (isPlacedEvenOrOddBet)){
+                    if(chosenNumber % 2 != 0) {
+                        winnings = 2 * amountBet;
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + Constants.ODD + "\t" + Constants.WIN + "\t" + winnings);
+                    } else {
+                        System.out.println(playerNames[i]);
+                        System.out.println(playerNames[i] + "\t" + Constants.ODD + "\t" + Constants.LOSE + "\t" + 0.0);
+                    }
+                }
+            }
+        }
+
+        scanner.close();
+        System.out.println("********************************************************************************");
+        System.out.println("           Thank you for using the Wonderlabz Console Roulette");
+        System.out.println("********************************************************************************");
     }
+
+    private static int ballChosenNumber() {
+        Random rand = new Random();
+        return rand.nextInt(36);
+    }
+
 }
 
 enum Constants{
